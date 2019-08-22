@@ -2,20 +2,24 @@ module Main where
 
 import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
+import Graphics.Gloss.Interface.IO.Interact
 
 -- main = display (InWindow "Nice Window" (200, 200) (10, 10)) white (renderCube [])
-main = simulate FullScreen blue 1 model renderCube updateCube
+main = simulate FullScreen blue 1 (Model {coordinates = initialCoordinates}) renderCube updateCube
+-- main = play FullScreen blue 1 model renderCube eventHandler updateCube
 -- main = print initialPointTemplate
 -- main = print $ getCube $ coordinates model
+-- main = print $ rotateModel model X $ pi/4
 
 type Edge = (Point3D,Point3D)
 type Cube = [Edge]
 type Point3D = (Float, Float, Float)
 
 data Axis = X | Y | Z deriving (Eq, Show)
+data Model = Model { coordinates::[Point3D] } deriving Show
 
-data Model = Model { coordinates::[Point3D] }
-model = Model {coordinates = initialCoordinates}
+eventHandler :: Event -> Model -> Model
+eventHandler _ model = model
 
 getCube :: [Point3D] -> Cube
 getCube coordinates = [(c1, c2)
@@ -46,7 +50,7 @@ getPath :: Point3D -> Point3D -> Path
 getPath (x1,y1,_) (x2,y2,_) = [(x1,y1),(x2,y2)]
 
 updateCube :: ViewPort -> Float -> Model -> Model
-updateCube _ _ m = rotateModel model X $ pi/4
+updateCube _ _ model = rotateModel model X $ pi/4
 
 rotateModel :: Model -> Axis -> Float -> Model
 rotateModel model axis angle = Model {coordinates = map (\coordinate -> myRotate coordinate axis angle) $ coordinates model}
