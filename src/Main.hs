@@ -46,7 +46,16 @@ getPath :: Point3D -> Point3D -> Path
 getPath (x1,y1,_) (x2,y2,_) = [(x1,y1),(x2,y2)]
 
 updateCube :: ViewPort -> Float -> Model -> Model
-updateCube _ _ m = m
+updateCube _ _ m = rotateModel model X $ pi/4
+
+rotateModel :: Model -> Axis -> Float -> Model
+rotateModel model axis angle = Model {coordinates = map (\coordinate -> myRotate coordinate axis angle) $ coordinates model}
+
+myRotate :: Point3D -> Axis -> Float -> Point3D
+myRotate (x, y, z) axis angle
+    | axis == X = (x, (y * cos angle) - (z * sin angle), (y * sin angle) + (z * cos angle))
+    | axis == Y = ((x * cos angle) + (z * sin angle), y, (z * cos angle) - (x * sin angle))
+    | axis == Z = ((x * cos angle) - (y * sin angle), (x * sin angle) + (y * cos angle), z)
 
 initialCoordinates = [((-120),120,(-120))
                       , (120,120,(-120))
@@ -57,9 +66,3 @@ initialCoordinates = [((-120),120,(-120))
                       , (120,(-120),120)
                       , ((-120),(-120),120)
                       ]
-
-rotate :: Axis -> Point3D -> Float -> Point3D
-rotate axis (x, y, z) angle
-    | axis == X = (x, y * cos angle - z * sin angle, y * sin angle + z * cos angle)
-    | axis == Y = (x * cos angle + z * sin angle, y, z * cos angle - x * sin angle)
-    | axis == Z = (x * cos angle - y * sin angle, x * sin angle + y * cos angle, z)
