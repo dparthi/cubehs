@@ -6,11 +6,13 @@ import Graphics.Gloss.Data.ViewPort
 -- main = display (InWindow "Nice Window" (200, 200) (10, 10)) white (renderCube [])
 main = simulate FullScreen blue 1 model renderCube updateCube
 -- main = print initialPointTemplate
--- main = print $ length $ getCube initialCoordinates
+-- main = print $ getCube $ coordinates model
 
 type Edge = (Point3D,Point3D)
 type Cube = [Edge]
 type Point3D = (Float, Float, Float)
+
+data Axis = X | Y | Z deriving (Eq, Show)
 
 data Model = Model { coordinates::[Point3D] }
 model = Model {coordinates = initialCoordinates}
@@ -38,17 +40,26 @@ getCube coordinates = [(c1, c2)
               c8 = coordinates !! 7
 
 renderCube :: Model -> Picture
-renderCube _ = Circle 80
+renderCube model = Line $ concat $ map (\(a,b) -> getPath a b) $ getCube $ coordinates model
+
+getPath :: Point3D -> Point3D -> Path
+getPath (x1,y1,_) (x2,y2,_) = [(x1,y1),(x2,y2)]
 
 updateCube :: ViewPort -> Float -> Model -> Model
 updateCube _ _ m = m
 
-initialCoordinates = [((-60),60,(-60))
-                      , (60,60,(-60))
-                      , (60,(-60),(-60))
-                      , ((-60),(-60),(-60))
-                      , ((-60),60,60)
-                      , (60,60,60)
-                      , (60,(-60),60)
-                      , ((-60),(-60),60)
+initialCoordinates = [((-120),120,(-120))
+                      , (120,120,(-120))
+                      , (120,(-120),(-120))
+                      , ((-120),(-120),(-120))
+                      , ((-120),120,120)
+                      , (120,120,120)
+                      , (120,(-120),120)
+                      , ((-120),(-120),120)
                       ]
+
+rotate :: Axis -> Point3D -> Float -> Point3D
+rotate axis (x, y, z) angle
+    | axis == X = (x, y * cos angle - z * sin angle, y * sin angle + z * cos angle)
+    | axis == Y = (x * cos angle + z * sin angle, y, z * cos angle - x * sin angle)
+    | axis == Z = (x * cos angle - y * sin angle, x * sin angle + y * cos angle, z)
