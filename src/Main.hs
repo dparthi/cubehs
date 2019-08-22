@@ -2,11 +2,16 @@ module Main where
 
 import Graphics.Gloss
 main = display (InWindow "Nice Window" (200, 200) (10, 10)) white (renderCube [])
+-- main = play FullScreen blue [] renderCube () ()
 -- main = print initialPointTemplate
+-- main = print $ getCube initialCoordinates
 
 type Edge = (Point3D,Point3D)
 type Cube = [Edge]
 type Point3D = (Float, Float, Float)
+
+data Model = Model { coordinates::[Point3D] }
+model = Model {coordinates = initialCoordinates}
 
 getCube :: [Point3D] -> Cube
 getCube coordinates = [(c1, c2)
@@ -33,3 +38,12 @@ getCube coordinates = [(c1, c2)
 renderCube :: Cube -> Picture
 renderCube _ = Circle 80
 
+initialCoordinates = [((-60),60,(-60))
+                      , (60,60,(-60))
+                      , (60,(-60),(-60))
+                      , ((-60),(-60),(-60))
+                      , ((-60),60,60)
+                      , (60,60,60)
+                      , (60,(-60),60)
+                      , ((-60),(-60),60)
+                      ]
