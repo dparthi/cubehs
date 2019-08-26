@@ -1,10 +1,14 @@
 module Cube where
 
+type Point = (Float, Float)
 type Point3D = (Float, Float, Float)
 type Edge = (Point3D,Point3D)
 type Cube = [Edge]
 
 data Axis = X | Y | Z deriving (Eq, Show)
+
+getLine :: Edge -> [Point]
+getLine ((x1,y1,_),(x2,y2,_)) = [(x1,y1), (x2,y2)]
 
 getCube :: [Point3D] -> Cube
 getCube coordinates = [(c1, c2)
@@ -29,10 +33,10 @@ getCube coordinates = [(c1, c2)
               c8 = coordinates !! 7
 
 rotateCube :: Cube -> Axis -> Float -> Cube
-rotateCube cube axis angle = getCube $ map (\coordinate -> myRotate coordinate axis angle) $ getCoordinates cube
+rotateCube cube axis angle = getCube $ map (\coordinate -> rotate coordinate axis angle) $ getCoordinates cube
 
-myRotate :: Point3D -> Axis -> Float -> Point3D
-myRotate (x, y, z) axis angle
+rotate :: Point3D -> Axis -> Float -> Point3D
+rotate (x, y, z) axis angle
     | axis == X = (x, (y * cos angle) - (z * sin angle), (y * sin angle) + (z * cos angle))
     | axis == Y = ((x * cos angle) + (z * sin angle), y, (z * cos angle) - (x * sin angle))
     | axis == Z = ((x * cos angle) - (y * sin angle), (x * sin angle) + (y * cos angle), z)
