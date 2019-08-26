@@ -8,6 +8,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.IO.Interact
 
+import qualified Cube as Cube
 -- main = display (InWindow "Nice Window" (200, 200) (10, 10)) white (renderCube [])
 -- main = simulate FullScreen blue 1 initModel renderCube rotateCubeOnAlternateAxes
 main = play FullScreen blue 1 initModel renderCube eventHandler rotateCubeOnAlternateAxes'
@@ -15,6 +16,7 @@ main = play FullScreen blue 1 initModel renderCube eventHandler rotateCubeOnAlte
 -- main = print $ getCube $ coordinates model
 -- main = print $ rotateModel model X $ pi/4
 -- main = print $ concat $ map (\(a,b) -> getPath a b) $ getCube $ coordinates $ rotateModel (Model {coordinates = initialCoordinates}) X $ pi/4
+-- main = print $ Cube.getCoordinates $ getCube $ coordinates initModel
 
 type Edge = (Point3D,Point3D)
 type Cube = [Edge]
