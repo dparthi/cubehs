@@ -10,6 +10,7 @@ main = simulate FullScreen blue 1 (Model {coordinates = initialCoordinates}) ren
 -- main = print initialPointTemplate
 -- main = print $ getCube $ coordinates model
 -- main = print $ rotateModel model X $ pi/4
+-- main = print $ concat $ map (\(a,b) -> getPath a b) $ getCube $ coordinates $ rotateModel (Model {coordinates = initialCoordinates}) X $ pi/4
 
 type Edge = (Point3D,Point3D)
 type Cube = [Edge]
@@ -44,7 +45,7 @@ getCube coordinates = [(c1, c2)
               c8 = coordinates !! 7
 
 renderCube :: Model -> Picture
-renderCube model = Line $ concat $ map (\(a,b) -> getPath a b) $ getCube $ coordinates model
+renderCube model = mconcat $ map (\(a,b) -> Line $ getPath a b) $ getCube $ coordinates model
 
 getPath :: Point3D -> Point3D -> Path
 getPath (x1,y1,_) (x2,y2,_) = [(x1,y1),(x2,y2)]
