@@ -5,7 +5,7 @@ import Graphics.Gloss.Data.ViewPort
 import Graphics.Gloss.Interface.IO.Interact
 
 -- main = display (InWindow "Nice Window" (200, 200) (10, 10)) white (renderCube [])
-main = simulate FullScreen blue 1 (Model {coordinates = initialCoordinates}) renderCube updateCube
+main = simulate FullScreen blue 1 initModel renderCube updateCube
 -- main = play FullScreen blue 1 model renderCube eventHandler updateCube
 -- main = print initialPointTemplate
 -- main = print $ getCube $ coordinates model
@@ -17,7 +17,9 @@ type Cube = [Edge]
 type Point3D = (Float, Float, Float)
 
 data Axis = X | Y | Z deriving (Eq, Show)
-data Model = Model { coordinates::[Point3D] } deriving Show
+data Model = Model { coordinates::[Point3D], lastAxis::Axis } deriving Show
+initModel :: Model
+initModel = Model { coordinates = initialCoordinates, lastAxis = X }
 
 eventHandler :: Event -> Model -> Model
 eventHandler _ model = model
@@ -51,10 +53,12 @@ getPath :: Point3D -> Point3D -> Path
 getPath (x1,y1,_) (x2,y2,_) = [(x1,y1),(x2,y2)]
 
 updateCube :: ViewPort -> Float -> Model -> Model
-updateCube _ _ model = rotateModel model X $ pi/4
+updateCube _ _ model
+  | lastAxis model == X = rotateModel model Y $ pi/4
+  | lastAxis model == Y = rotateModel model X $ pi/4
 
 rotateModel :: Model -> Axis -> Float -> Model
-rotateModel model axis angle = Model {coordinates = map (\coordinate -> myRotate coordinate axis angle) $ coordinates model}
+rotateModel model axis angle = Model {coordinates = map (\coordinate -> myRotate coordinate axis angle) $ coordinates model, lastAxis = axis}
 
 myRotate :: Point3D -> Axis -> Float -> Point3D
 myRotate (x, y, z) axis angle
