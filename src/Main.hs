@@ -18,43 +18,19 @@ main = play FullScreen blue 1 initModel renderCube eventHandler rotateCubeOnAlte
 -- main = print $ concat $ map (\(a,b) -> getPath a b) $ getCube $ coordinates $ rotateModel (Model {coordinates = initialCoordinates}) X $ pi/4
 -- main = print $ Cube.getCoordinates $ getCube $ coordinates initModel
 
-type Edge = (Point3D,Point3D)
-type Cube = [Edge]
 type Point3D = (Float, Float, Float)
 
 data Axis = X | Y | Z deriving (Eq, Show)
-data Model = Model { coordinates::[Point3D], lastAxis::Axis } deriving Show
+data Model = Model { cube:: Cube.Cube, lastAxis::Axis } deriving Show
 initModel :: Model
-initModel = Model { coordinates = initialCoordinates, lastAxis = X }
+initModel = Model { cube = Cube.getCube initialCoordinates, lastAxis = X }
 
 eventHandler :: Event -> Model -> Model
 eventHandler (EventKey (MouseButton LeftButton) Down xPos yPos) model = model
 eventHandler _ model = model
 
-getCube :: [Point3D] -> Cube
-getCube coordinates = [(c1, c2)
-                        , (c2, c3)
-                        , (c3, c4)
-                        , (c4, c1)
-                        , (c1, c5)
-                        , (c5, c6)
-                        , (c6, c7)
-                        , (c7, c8)
-                        , (c8, c5)
-                        , (c2, c6)
-                        , (c3, c7)
-                        , (c4, c8)]
-        where c1 = coordinates !! 0
-              c2 = coordinates !! 1
-              c3 = coordinates !! 2
-              c4 = coordinates !! 3
-              c5 = coordinates !! 4
-              c6 = coordinates !! 5
-              c7 = coordinates !! 6
-              c8 = coordinates !! 7
-
 renderCube :: Model -> Picture
-renderCube model = mconcat $ map (\(a,b) -> Line $ getPath a b) $ getCube $ coordinates model
+renderCube model = mconcat $ map (\(a,b) -> Line $ getPath a b) $ cube model
 
 getPath :: Point3D -> Point3D -> Path
 getPath (x1,y1,_) (x2,y2,_) = [(x1,y1),(x2,y2)]
